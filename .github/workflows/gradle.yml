@@ -12,13 +12,15 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+  release:
+    types: [ published ]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
 
     steps:
     - uses: actions/checkout@v4
@@ -37,7 +39,13 @@ jobs:
       run: ./gradlew build
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: GarbageCollector
         path: build/libs
+
+    - name: Attach jar to release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: build/libs/*.jar
