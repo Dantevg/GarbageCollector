@@ -35,7 +35,8 @@ spigot {
             permission = "garbagecollector.*"
             usage = """
                 Usage:
-                  /<command>
+                  /<command>       - runs the garbage collector
+                  /<command> query - displays the amount of memory in use
             """.trimIndent()
         }
     }

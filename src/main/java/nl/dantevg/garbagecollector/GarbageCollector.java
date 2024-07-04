@@ -16,11 +16,6 @@ public class GarbageCollector extends JavaPlugin implements CommandExecutor, Tab
 		getCommand("gc").setExecutor(this);
 		getCommand("gc").setTabCompleter(this);
 	}
-
-	@Override
-	public void onDisable() {
-		getLogger().info("GarbageCollector disabled!");
-	}
 	
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -28,7 +23,12 @@ public class GarbageCollector extends JavaPlugin implements CommandExecutor, Tab
 			long before = Runtime.getRuntime().freeMemory();
 			System.gc();
 			long after = Runtime.getRuntime().freeMemory();
-			sender.sendMessage("Freed %s of memory.".formatted(GarbageCollector.formatBytes(after - before)));
+			long used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			sender.sendMessage("Freed %s of memory (%s in use).".formatted(formatBytes(after - before), formatBytes(used)));
+			return true;
+		} else if (args.length == 1 && args[0].equalsIgnoreCase("query")) {
+			long used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			sender.sendMessage("%s of memory in use.".formatted(formatBytes(used)));
 			return true;
 		}
 		return false;
@@ -36,12 +36,19 @@ public class GarbageCollector extends JavaPlugin implements CommandExecutor, Tab
 	
 	@Override
 	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-		return Collections.emptyList();
+		return Collections.singletonList("query");
 	}
 	
+	/**
+	 * Format a number of bytes into a human-readable string. Will use the
+	 * lowest SI-prefix that results in a number greater than or equal to 1.
+	 *
+	 * @param bytes The number of bytes to format.
+	 * @return A human-readable string representing the number of bytes.
+	 */
 	public static String formatBytes(long bytes) {
-		final String[] prefixes = new String[] { "", "k", "M", "G" };
+		final String[] prefixes = new String[]{"", "k", "M", "G"};
 		int exp = (int) (Math.log10(bytes) / 3);
-		return String.format("%.1f %sB", bytes / Math.pow(1000, exp), prefixes[exp]);
+		return String.format("%.3g %sB", bytes / Math.pow(1000, exp), prefixes[exp]);
 	}
 }
