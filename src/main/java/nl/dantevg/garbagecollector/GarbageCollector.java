@@ -23,12 +23,18 @@ public class GarbageCollector extends JavaPlugin implements CommandExecutor, Tab
 			long before = Runtime.getRuntime().freeMemory();
 			System.gc();
 			long after = Runtime.getRuntime().freeMemory();
-			long used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			sender.sendMessage("Freed %s of memory (%s in use).".formatted(formatBytes(after - before), formatBytes(used)));
+			long used = Runtime.getRuntime().totalMemory() - after;
+			sender.sendMessage("Freed %s of memory (%s in use).".formatted(
+					formatBytes(after - before),
+					formatBytes(used)));
 			return true;
 		} else if (args.length == 1 && args[0].equalsIgnoreCase("query")) {
-			long used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			sender.sendMessage("%s of memory in use.".formatted(formatBytes(used)));
+			long total = Runtime.getRuntime().totalMemory();
+			long free = Runtime.getRuntime().freeMemory();
+			long max = Runtime.getRuntime().maxMemory();
+			sender.sendMessage("%s of %s total in use (%s max).".formatted(formatBytes(total - free),
+					formatBytes(total),
+					formatBytes(max)));
 			return true;
 		}
 		return false;
