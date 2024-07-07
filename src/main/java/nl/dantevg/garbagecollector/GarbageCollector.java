@@ -32,7 +32,8 @@ public class GarbageCollector extends JavaPlugin implements CommandExecutor, Tab
 			long total = Runtime.getRuntime().totalMemory();
 			long free = Runtime.getRuntime().freeMemory();
 			long max = Runtime.getRuntime().maxMemory();
-			sender.sendMessage("%s of %s total in use (%s max).".formatted(formatBytes(total - free),
+			sender.sendMessage("%s of %s total in use (%s max).".formatted(
+					formatBytes(total - free),
 					formatBytes(total),
 					formatBytes(max)));
 			return true;
