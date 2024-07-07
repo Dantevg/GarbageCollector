@@ -48,7 +48,7 @@ public class GarbageCollector extends JavaPlugin implements CommandExecutor, Tab
 	 */
 	public static String formatBytes(long bytes) {
 		final String[] prefixes = new String[]{"", "k", "M", "G"};
-		int exp = (int) (Math.log10(bytes) / 3);
+		int exp = (int) (Math.log10(Math.abs(bytes)) / 3);
 		return String.format("%.3g %sB", bytes / Math.pow(1000, exp), prefixes[exp]);
 	}
 }
